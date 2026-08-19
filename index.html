@@ -14,7 +14,7 @@
            qui sotto. Il file deve trovarsi dentro la cartella "img".
            ============================================================ */
         :root {
-            --sfondo: url("img/ImmagineSfondo.jpg");
+            --sfondo: url("img/ImmagineSfondo.png");
         }
 
         * {
@@ -25,6 +25,11 @@
 
         body {
             font-family: Arial, sans-serif;
+            /* Ottimizzazioni mobile: niente lampeggio blu al tocco
+               e niente ingrandimento automatico del testo su iOS. */
+            -webkit-tap-highlight-color: transparent;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
             /* Colore di riserva: se l'immagine di sfondo non è
                disponibile, si vede questo colore scuro. */
             background-color: #1f2233;
@@ -33,7 +38,8 @@
             background-position: center;   /* centra l'immagine */
             background-repeat: no-repeat;
 
-            min-height: 100vh;
+            min-height: 100vh;   /* fallback per browser datati */
+            min-height: 100dvh;  /* gestisce meglio la barra del browser su mobile */
             display: flex;
             flex-direction: column;
             justify-content: center;   /* centra verticalmente il gruppo */
@@ -56,6 +62,10 @@
             max-width: 960px;   /* = 2 x maxWidth del flipbook (2 x 480) */
             transition: transform 0.7s ease;   /* scorrimento fluido */
             will-change: transform;
+            /* Evita che durante lo sfoglio col dito venga selezionato
+               accidentalmente del testo o delle immagini. */
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         /* ============================================================
@@ -84,53 +94,14 @@
             -webkit-user-drag: none;
         }
 
-        /* ============================================================
-           CONTROLLI E INFO PAGINA (sopra lo sfondo)
-           ============================================================ */
-        .controls {
-            text-align: center;
-        }
-
-        button {
-            background: rgba(0, 0, 0, 0.55);
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.45);
-            padding: 12px 26px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 0 8px;
-            transition: background 0.25s, transform 0.1s;
-        }
-
-        button:hover:not(:disabled) {
-            background: rgba(0, 0, 0, 0.78);
-        }
-
-        button:active:not(:disabled) {
-            transform: scale(0.97);
-        }
-
-        button:disabled {
-            background: rgba(0, 0, 0, 0.25);
-            border-color: rgba(255, 255, 255, 0.15);
-            color: rgba(255, 255, 255, 0.6);
-            cursor: not-allowed;
-        }
-
-        .info {
-            text-align: center;
-            color: #ffffff;
-            font-size: 14px;
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
-        }
-
-        /* Su schermi piccoli riduci pulsanti e spazi */
+        /* Su schermi piccoli: il libro occupa tutto lo schermo. */
         @media (max-width: 600px) {
-            button {
-                padding: 11px 18px;
-                font-size: 14px;
-                margin: 5px;
+            body {
+                gap: 0;
+                padding: 0;
+            }
+            #book-wrapper {
+                max-width: 100%;
             }
         }
     </style>
@@ -162,7 +133,7 @@
 
             <!-- PAGINA 2 — (sinistra della doppia pagina centrale) -->
             <div class="page">
-                <img src="img/Immagine2.jpg" alt="Pagina 2">
+                <img src="img/Immagine2.png" alt="Pagina 2">
             </div>
 
             <!-- PAGINA 3 — (destra della doppia pagina centrale) -->
@@ -172,7 +143,7 @@
 
             <!-- PAGINA 4 — RETRO COPERTINA (da sola) -->
             <div class="page">
-                <img src="img/Immagine4.jpg" alt="Retro copertina">
+                <img src="img/Immagine4.png" alt="Retro copertina">
             </div>
 
             <!-- PAGINA 5 -->
@@ -185,19 +156,19 @@
                 <img src="img/Immagine6.jpg" alt="Pagina 6">
             </div>
 
+            <!-- PAGINA 7 -->
+            <div class="page">
+                <img src="img/Immagine7.jpg" alt="Pagina 6">
+            </div>
+            <!-- PAGINA 8 -->
+            <div class="page">
+                <img src="img/Immagine8.jpg" alt="Pagina 6">
+            </div>
+
             <!-- FINE LIBRO: aggiungi qui sopra eventuali nuove pagine -->
 
         </div>
     </div>
-
-    <!-- Pulsanti di navigazione -->
-    <div class="controls">
-        <button id="prevBtn">← Precedente</button>
-        <button id="nextBtn">Successiva →</button>
-    </div>
-
-    <!-- Contatore pagina -->
-    <p id="pageInfo" class="info">Pagina 1 di 6</p>
 
     <!-- ============================================================
          LIBRERIA STPAGEFLIP (in locale, nessuna dipendenza esterna)
@@ -218,8 +189,8 @@
         //                      (copertina e retro copertina), le altre
         //                      si mostrano affiancate come un libro aperto.
         //
-        //  usePortrait: false -> il libro resta SEMPRE in modalità
-        //                        "doppia pagina", anche su schermi stretti.
+        //  usePortrait: true -> su schermi stretti mostra UNA pagina
+        //                       alla volta; su schermi larghi due pagine.
         // ============================================================
         const pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
             width: 750,          // larghezza di una pagina (proporzione)
@@ -231,7 +202,7 @@
             maxHeight: 700,      // altezza massima di una pagina (px)
             autoSize: true,      // ridimensiona automaticamente
             showCover: true,     // copertina e retro copertina singole
-            usePortrait: false,  // mantiene sempre il formato "libro aperto"
+            usePortrait: true,   // mobile: una pagina alla volta; desktop: doppia
             drawShadow: true,    // ombre realistiche durante lo sfoglio
             flippingTime: 800,   // durata dell'animazione (millisecondi)
             disableFlipByClick: false,  // consente lo sfoglio cliccando sulla pagina
@@ -246,12 +217,6 @@
         // indicarlo a mano.
         pageFlip.loadFromHTML(document.querySelectorAll("#flipbook .page"));
 
-        // ============================================================
-        //  CONTATORE E STATO DEI PULSANTI
-        // ============================================================
-        const pageInfo = document.getElementById("pageInfo");
-        const prevBtn = document.getElementById("prevBtn");
-        const nextBtn = document.getElementById("nextBtn");
         const bookWrapper = document.getElementById("book-wrapper");
 
         // ============================================================
@@ -276,17 +241,24 @@
                 return;
             }
 
+            const orientamento = pageFlip.getOrientation();
             const mezzaPagina = rect.pageWidth / 2;
             let spostamento = 0;
 
-            if (totale > 1 && pagina === 0) {
-                // COPERTINA: è sulla metà destra, quindi la sposto
-                // a sinistra di mezza pagina per centrarla.
-                spostamento = -mezzaPagina;
-            } else if (totale > 1 && pagina === totale - 1 && totale % 2 === 0) {
-                // RETRO COPERTINA: è sulla metà sinistra, quindi la sposto
-                // a destra di mezza pagina per centrarla.
-                spostamento = mezzaPagina;
+            // Lo spostamento serve SOLO in modalità "landscape" (due pagine
+            // affiancate, tipica del desktop). In modalità "portrait"
+            // (una pagina alla volta, tipica degli smartphone) la pagina
+            // è già centrata dalla libreria e non va spostata.
+            if (orientamento === "landscape") {
+                if (totale > 1 && pagina === 0) {
+                    // COPERTINA: è sulla metà destra, quindi la sposto
+                    // a sinistra di mezza pagina per centrarla.
+                    spostamento = -mezzaPagina;
+                } else if (totale > 1 && pagina === totale - 1 && totale % 2 === 0) {
+                    // RETRO COPERTINA: è sulla metà sinistra, quindi la sposto
+                    // a destra di mezza pagina per centrarla.
+                    spostamento = mezzaPagina;
+                }
             }
 
             // Al primo allineamento non vogliamo l'animazione di scorrimento:
@@ -303,16 +275,7 @@
 
         // L'evento "flip" scatta ogni volta che si cambia pagina.
         // e.data = indice della pagina attualmente visibile (parte da 0).
-        pageFlip.on("flip", function (event) {
-            const current = event.data;
-            const total = pageFlip.getPageCount();
-
-            pageInfo.textContent = "Pagina " + (current + 1) + " di " + total;
-
-            // Disabilita i pulsanti quando siamo all'inizio o alla fine.
-            prevBtn.disabled = (current === 0);
-            nextBtn.disabled = (current === total - 1);
-
+        pageFlip.on("flip", function () {
             // Riallinea il libro con l'animazione di scorrimento.
             aggiornaCentratura(true);
         });
@@ -337,18 +300,6 @@
             requestAnimationFrame(function () {
                 aggiornaCentratura(false);
             });
-        });
-
-        // ============================================================
-        //  PULSANTI PRECEDENTE / SUCCESSIVA
-        // ============================================================
-        //  flipPrev / flipNext eseguono la sfogliata con animazione.
-        prevBtn.addEventListener("click", function () {
-            pageFlip.flipPrev("top");
-        });
-
-        nextBtn.addEventListener("click", function () {
-            pageFlip.flipNext("top");
         });
 
         // ============================================================
