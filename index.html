@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Il mio Flipbook</title>
+
+    <style>
+        /* ============================================================
+           SFONDO MODIFICABILE
+           ============================================================
+           ★ PER CAMBIARE LO SFONDO ★
+           Sostituisci solo il nome del file dentro url("...")
+           qui sotto. Il file deve trovarsi dentro la cartella "img".
+           ============================================================ */
+        :root {
+            --sfondo: url("img/ImmagineSfondo.jpg");
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            /* Colore di riserva: se l'immagine di sfondo non è
+               disponibile, si vede questo colore scuro. */
+            background-color: #1f2233;
+            background-image: var(--sfondo);
+            background-size: cover;        /* copre tutto lo schermo */
+            background-position: center;   /* centra l'immagine */
+            background-repeat: no-repeat;
+
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;   /* centra verticalmente il gruppo */
+            align-items: center;       /* centra orizzontalmente i figli */
+            gap: 18px;
+            padding: 20px;
+        }
+
+        /* ============================================================
+           CONTENITORE DEL LIBRO (si sposta per il centraggio)
+           ============================================================
+           Questo riquadro viene spostato a sinistra/destra via
+           JavaScript per ottenere il comportamento:
+           - libro CHIUSO  -> copertina centrata da sola;
+           - libro APERTO  -> rilegatura (punto tra le due pagine)
+                              centrata.
+           ============================================================ */
+        #book-wrapper {
+            width: 100%;
+            max-width: 960px;   /* = 2 x maxWidth del flipbook (2 x 480) */
+            transition: transform 0.7s ease;   /* scorrimento fluido */
+            will-change: transform;
+        }
+
+        /* ============================================================
+           STILE DELLE PAGINE
+           ============================================================
+           IMPORTANTE:
+           - Qui sotto trovi le pagine del libro.
+           - Ogni <div class="page"> ... </div> è UNA pagina.
+           - Per CAMBIARE un'immagine basta modificare l'attributo
+             src="" dell'<img> corrispondente (vedi sezione <body>).
+           - Per AGGIUNGERE pagine in futuro: aggiungi sempre DUE nuovi
+             blocchi <div class="page"> ... </div> (le pagine si aggiungono
+             a coppie per mantenere il formato "libro aperto"
+             con copertina e retro copertina singole).
+           ============================================================ */
+        #flipbook .page {
+            background-color: #ffffff;
+        }
+
+        #flipbook .page img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;   /* riempie la pagina senza deformare l'immagine */
+            display: block;
+            pointer-events: none; /* evita interferenze con il trascinamento del libro */
+            -webkit-user-drag: none;
+        }
+
+        /* ============================================================
+           CONTROLLI E INFO PAGINA (sopra lo sfondo)
+           ============================================================ */
+        .controls {
+            text-align: center;
+        }
+
+        button {
+            background: rgba(0, 0, 0, 0.55);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            padding: 12px 26px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 8px;
+            transition: background 0.25s, transform 0.1s;
+        }
+
+        button:hover:not(:disabled) {
+            background: rgba(0, 0, 0, 0.78);
+        }
+
+        button:active:not(:disabled) {
+            transform: scale(0.97);
+        }
+
+        button:disabled {
+            background: rgba(0, 0, 0, 0.25);
+            border-color: rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.6);
+            cursor: not-allowed;
+        }
+
+        .info {
+            text-align: center;
+            color: #ffffff;
+            font-size: 14px;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Su schermi piccoli riduci pulsanti e spazi */
+        @media (max-width: 600px) {
+            button {
+                padding: 11px 18px;
+                font-size: 14px;
+                margin: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+         LIBRO: QUI CI SONO LE PAGINE
+
+         ★ COME CAMBIARE LE IMMAGINI ★
+         Sostituisci solo il nome del file dentro src="...".
+         Esempio: vuoi mettere "foto_vacanza.jpg" come copertina?
+         Cambia  src="img/Immagine1.jpg"  in  src="img/foto_vacanza.jpg"
+
+         ★ COME AGGIUNGERE PAGINE ★
+         Copia uno di questi blocchi <div class="page">...</div>
+         e incollalo prima del commento "FINE LIBRO".
+         Aggiungi le pagine SEMPRE A COPPIE (due per volta) per
+         mantenere il formato libro: copertina singola,
+         pagine a due a due, retro copertina singola.
+         ============================================================ -->
+    <div id="book-wrapper">
+        <div id="flipbook">
+
+            <!-- PAGINA 1 — COPERTINA (da sola) -->
+            <div class="page">
+                <img src="img/Immagine1.jpg" alt="Copertina">
+            </div>
+
+            <!-- PAGINA 2 — (sinistra della doppia pagina centrale) -->
+            <div class="page">
+                <img src="img/Immagine2.jpg" alt="Pagina 2">
+            </div>
+
+            <!-- PAGINA 3 — (destra della doppia pagina centrale) -->
+            <div class="page">
+                <img src="img/Immagine3.jpg" alt="Pagina 3">
+            </div>
+
+            <!-- PAGINA 4 — RETRO COPERTINA (da sola) -->
+            <div class="page">
+                <img src="img/Immagine4.jpg" alt="Retro copertina">
+            </div>
+
+            <!-- PAGINA 5 -->
+            <div class="page">
+                <img src="img/Immagine5.jpg" alt="Pagina 5">
+            </div>
+
+            <!-- PAGINA 6 -->
+            <div class="page">
+                <img src="img/Immagine6.jpg" alt="Pagina 6">
+            </div>
+
+            <!-- FINE LIBRO: aggiungi qui sopra eventuali nuove pagine -->
+
+        </div>
+    </div>
+
+    <!-- Pulsanti di navigazione -->
+    <div class="controls">
+        <button id="prevBtn">← Precedente</button>
+        <button id="nextBtn">Successiva →</button>
+    </div>
+
+    <!-- Contatore pagina -->
+    <p id="pageInfo" class="info">Pagina 1 di 6</p>
+
+    <!-- ============================================================
+         LIBRERIA STPAGEFLIP (in locale, nessuna dipendenza esterna)
+         ============================================================ -->
+    <script src="page-flip.browser.js"></script>
+
+    <script>
+        // ============================================================
+        //  CREAZIONE DEL FLIPBOOK
+        // ============================================================
+        //  Spiegazione delle impostazioni principali:
+        //
+        //  width / height : proporzioni di UNA singola pagina.
+        //                   I valori 750 x 1000 danno una pagina
+        //                   verticale (rapporto 3:4), ideale per le foto.
+        //
+        //  showCover: true -> la prima e l'ultima pagina sono singole
+        //                      (copertina e retro copertina), le altre
+        //                      si mostrano affiancate come un libro aperto.
+        //
+        //  usePortrait: false -> il libro resta SEMPRE in modalità
+        //                        "doppia pagina", anche su schermi stretti.
+        // ============================================================
+        const pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
+            width: 750,          // larghezza di una pagina (proporzione)
+            height: 1000,        // altezza di una pagina (proporzione)
+            size: "stretch",     // il libro si adatta alla larghezza del contenitore
+            minWidth: 200,       // larghezza minima di una pagina (px)
+            maxWidth: 480,       // larghezza massima di una pagina (px)
+            minHeight: 200,      // altezza minima di una pagina (px)
+            maxHeight: 700,      // altezza massima di una pagina (px)
+            autoSize: true,      // ridimensiona automaticamente
+            showCover: true,     // copertina e retro copertina singole
+            usePortrait: false,  // mantiene sempre il formato "libro aperto"
+            drawShadow: true,    // ombre realistiche durante lo sfoglio
+            flippingTime: 800,   // durata dell'animazione (millisecondi)
+            disableFlipByClick: false,  // consente lo sfoglio cliccando sulla pagina
+            showPageCorners: true,      // mostra il piegamento agli angoli
+            useMouseEvents: true,       // abilita il trascinamento con il mouse
+            mobileScrollSupport: true,  // su touch si può sfogliare col dito
+            clickEventForward: true     // i clic sui link/button restano attivi
+        });
+
+        // Collega le pagine HTML (i blocchi <div class="page">) al flipbook.
+        // Il numero di pagine viene calcolato automaticamente: non serve
+        // indicarlo a mano.
+        pageFlip.loadFromHTML(document.querySelectorAll("#flipbook .page"));
+
+        // ============================================================
+        //  CONTATORE E STATO DEI PULSANTI
+        // ============================================================
+        const pageInfo = document.getElementById("pageInfo");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const bookWrapper = document.getElementById("book-wrapper");
+
+        // ============================================================
+        //  CENTRAGGIO DINAMICO DEL LIBRO
+        // ============================================================
+        //  La libreria disegna:
+        //  - la COPERTINA sulla metà DESTRA del blocco libro;
+        //  - la RETRO COPERTINA sulla metà SINISTRA;
+        //  - le due pagine centrali su entrambe le metà.
+        //
+        //  Per ottenere l'effetto richiesto, spostiamo tutto il libro:
+        //  - libro chiuso  -> copertina centrata da sola;
+        //  - libro aperto  -> rilegatura (spazio tra le due pagine) centrata.
+        // ============================================================
+        function aggiornaCentratura(animato) {
+            const rect = pageFlip.getBoundsRect();
+            const totale = pageFlip.getPageCount();
+            const pagina = pageFlip.getCurrentPageIndex();
+
+            // Se le dimensioni non sono ancora pronte, esce senza far nulla.
+            if (!rect || !rect.pageWidth) {
+                return;
+            }
+
+            const mezzaPagina = rect.pageWidth / 2;
+            let spostamento = 0;
+
+            if (totale > 1 && pagina === 0) {
+                // COPERTINA: è sulla metà destra, quindi la sposto
+                // a sinistra di mezza pagina per centrarla.
+                spostamento = -mezzaPagina;
+            } else if (totale > 1 && pagina === totale - 1 && totale % 2 === 0) {
+                // RETRO COPERTINA: è sulla metà sinistra, quindi la sposto
+                // a destra di mezza pagina per centrarla.
+                spostamento = mezzaPagina;
+            }
+
+            // Al primo allineamento non vogliamo l'animazione di scorrimento:
+            // il libro deve partire già centrato.
+            if (animato === false) {
+                bookWrapper.style.transition = "none";
+                bookWrapper.style.transform = "translateX(" + spostamento + "px)";
+                void bookWrapper.offsetWidth; // forza il browser a rileggere la posizione
+                bookWrapper.style.transition = "";
+            } else {
+                bookWrapper.style.transform = "translateX(" + spostamento + "px)";
+            }
+        }
+
+        // L'evento "flip" scatta ogni volta che si cambia pagina.
+        // e.data = indice della pagina attualmente visibile (parte da 0).
+        pageFlip.on("flip", function (event) {
+            const current = event.data;
+            const total = pageFlip.getPageCount();
+
+            pageInfo.textContent = "Pagina " + (current + 1) + " di " + total;
+
+            // Disabilita i pulsanti quando siamo all'inizio o alla fine.
+            prevBtn.disabled = (current === 0);
+            nextBtn.disabled = (current === total - 1);
+
+            // Riallinea il libro con l'animazione di scorrimento.
+            aggiornaCentratura(true);
+        });
+
+        // Riallinea anche quando l'orientamento cambia o si ridimensiona la finestra.
+        pageFlip.on("changeOrientation", function () {
+            aggiornaCentratura(false);
+        });
+
+        window.addEventListener("resize", function () {
+            aggiornaCentratura(false);
+        });
+
+        // Allineamento iniziale (senza animazione) appena la pagina è pronta.
+        pageFlip.on("init", function () {
+            requestAnimationFrame(function () {
+                aggiornaCentratura(false);
+            });
+        });
+
+        window.addEventListener("load", function () {
+            requestAnimationFrame(function () {
+                aggiornaCentratura(false);
+            });
+        });
+
+        // ============================================================
+        //  PULSANTI PRECEDENTE / SUCCESSIVA
+        // ============================================================
+        //  flipPrev / flipNext eseguono la sfogliata con animazione.
+        prevBtn.addEventListener("click", function () {
+            pageFlip.flipPrev("top");
+        });
+
+        nextBtn.addEventListener("click", function () {
+            pageFlip.flipNext("top");
+        });
+
+        // ============================================================
+        //  FRECCE DELLA TASTIERA (opzionale ma comodo)
+        // ============================================================
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "ArrowLeft") {
+                pageFlip.flipPrev("top");
+            } else if (event.key === "ArrowRight") {
+                pageFlip.flipNext("top");
+            }
+        });
+    </script>
+</body>
+</html>
