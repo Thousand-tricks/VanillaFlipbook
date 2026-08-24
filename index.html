@@ -94,6 +94,14 @@
             -webkit-user-drag: none;
         }
 
+        /* Link cliccabili dentro le pagine: riempiono tutta la pagina
+           così l'immagine (che usa height:100%) continua a funzionare. */
+        #flipbook .page a {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
         /* Su schermi piccoli: il libro occupa tutto lo schermo. */
         @media (max-width: 600px) {
             body {
@@ -128,7 +136,7 @@
 
             <!-- PAGINA 1 — COPERTINA (da sola) -->
             <div class="page">
-                <img src="img/Immagine1.jpg" alt="Copertina">
+                <img src="img/Fronte.png" alt="Copertina">
             </div>
 
             <!-- PAGINA 2 — (sinistra della doppia pagina centrale) -->
@@ -138,32 +146,81 @@
 
             <!-- PAGINA 3 — (destra della doppia pagina centrale) -->
             <div class="page">
-                <img src="img/Immagine3.jpg" alt="Pagina 3">
+                <img src="img/Immagine3.png" alt="Pagina 3">
             </div>
 
             <!-- PAGINA 4 — RETRO COPERTINA (da sola) -->
             <div class="page">
-                <img src="img/Immagine4.png" alt="Retro copertina">
+                <img src="img/1.png" alt="Retro copertina">
             </div>
 
             <!-- PAGINA 5 -->
             <div class="page">
-                <img src="img/Immagine5.jpg" alt="Pagina 5">
+                <img src="img/2.png" alt="Pagina 5 del libro Curare, cura">
             </div>
 
             <!-- PAGINA 6 -->
             <div class="page">
-                <img src="img/Immagine6.jpg" alt="Pagina 6">
+                <img src="img/3.png" alt="Pagina 6">
             </div>
 
             <!-- PAGINA 7 -->
             <div class="page">
-                <img src="img/Immagine7.jpg" alt="Pagina 6">
+                <img src="img/4.png" alt="Pagina 6">
             </div>
             <!-- PAGINA 8 -->
             <div class="page">
-                <img src="img/Immagine8.jpg" alt="Pagina 6">
+                <img src="img/5.png" alt="Pagina 6">
             </div>
+            
+            <div class="page">
+                <img src="img/6.png" alt="Pagina 6">
+            </div>
+
+            <div class="page">
+                <img src="img/7.png" alt="Pagina 6">
+            </div>
+
+            <div class="page">
+                <img src="img/8.png" alt="Pagina 6">
+            </div>
+
+            <div class="page">
+                <img src="img/9.png" alt="Pagina 6">
+            </div>
+
+            <div class="page">
+                <img src="img/10.png" alt="Pagina 6">
+            </div>
+
+            <div class="page">
+                <img src="img/11.png" alt="Pagina 6">
+            </div>
+
+            <div class="page">
+                <img src="img/12.png" alt="Pagina 6">
+            </div>
+
+            <div class="page">
+                <img src="img/13.png" alt="Pagina 6">
+            </div>
+
+            <div class="page">
+                <img src="img/14.png" alt="Pagina 6">
+            </div>
+            <div class="page">
+                <img src="img/15.png" alt="Pagina 6">
+            </div>
+            <div class="page">
+                <a href="https://www.ibs.it/curare-cura-percorsi-di-ricerca-libro-vari/e/9788885595613" target="_blank" rel="noopener">
+                    <img src="img/ImmagineLink.png" alt="Acquista il libro Curare, cura su IBS">
+                </a>
+            </div>
+            <!-- Ho aggiunto io style, Maria fa attenzione se leggi questo. Se crei uno tag con style cancella questo -->
+            <div class="page">
+                <img src="img/Retro.png" alt="Pagina 6" style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+
 
             <!-- FINE LIBRO: aggiungi qui sopra eventuali nuove pagine -->
 
