@@ -9,7 +9,7 @@
         /* ============================================================
            SFONDO MODIFICABILE
            ============================================================
-           ★ PER CAMBIARE LO SFONDO ★
+            PER CAMBIARE LO SFONDO 
            Sostituisci solo il nome del file dentro url("...")
            qui sotto. Il file deve trovarsi dentro la cartella "img".
            ============================================================ */
@@ -94,19 +94,25 @@
             -webkit-user-drag: none;
         }
 
-        /* Link cliccabili dentro le pagine: riempiono tutta la pagina
-           così l'immagine (che usa height:100%) continua a funzionare. */
-        #flipbook .page a {
-            display: block;
-            width: 100%;
-            height: 100%;
+        /* Riquadro cliccabile sopra il bottone: regola posizione e dimensioni qui.
+           Il riquadro è trasparente e si trova al centro della pagina. */
+        #flipbook .page a.link-acquisto {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 55%;    /* larghezza del riquadro (regolabile) */
+            height: 18%;   /* altezza del riquadro (regolabile) */
+            z-index: 5;
         }
 
-        /* Su schermi piccoli: il libro occupa tutto lo schermo. */
+        /* Su schermi piccoli: il libro occupa tutto lo schermo e nasconde lo sfondo. */
         @media (max-width: 600px) {
             body {
                 gap: 0;
                 padding: 0;
+                background-image: none;     /* niente immagine di sfondo */
+                background-color: #ffffff;  /* bianco, come le pagine */
             }
             #book-wrapper {
                 max-width: 100%;
@@ -212,9 +218,8 @@
                 <img src="img/15.png" alt="Pagina 6">
             </div>
             <div class="page">
-                <a href="https://www.ibs.it/curare-cura-percorsi-di-ricerca-libro-vari/e/9788885595613" target="_blank" rel="noopener">
-                    <img src="img/ImmagineLink.png" alt="Acquista il libro Curare, cura su IBS">
-                </a>
+                <img src="img/ImmagineLink.png" alt="Acquista il libro Curare, cura su IBS">
+                <a class="link-acquisto" href="https://www.ibs.it/curare-cura-percorsi-di-ricerca-libro-vari/e/9788885595613" target="_blank" rel="noopener" aria-label="Acquista il libro su IBS"></a>
             </div>
             <!-- Ho aggiunto io style, Maria fa attenzione se leggi questo. Se crei uno tag con style cancella questo -->
             <div class="page">
@@ -360,6 +365,26 @@
         });
 
         // ============================================================
+        //  LOOP: dall'ultima pagina, girando avanti si torna alla prima
+        var flipNextOriginale = pageFlip.flipNext.bind(pageFlip);
+        var flipPrevOriginale = pageFlip.flipPrev.bind(pageFlip);
+
+        pageFlip.flipNext = function (corner) {
+            if (pageFlip.getCurrentPageIndex() === pageFlip.getPageCount() - 1) {
+                pageFlip.flip(0, corner || "top");   // torna alla copertina
+            } else {
+                flipNextOriginale(corner);
+            }
+        };
+
+        pageFlip.flipPrev = function (corner) {
+            if (pageFlip.getCurrentPageIndex() === 0) {
+                pageFlip.flip(pageFlip.getPageCount() - 1, corner || "top"); // torna alla retro copertina
+            } else {
+                flipPrevOriginale(corner);
+            }
+        };
+
         //  FRECCE DELLA TASTIERA (opzionale ma comodo)
         // ============================================================
         document.addEventListener("keydown", function (event) {
